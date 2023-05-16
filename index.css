@@ -5,6 +5,8 @@ h1 {
 
 h2 {
     text-align: center;
+    padding: 10px;
+    letter-spacing: 3px;
 
 }
 
@@ -43,8 +45,8 @@ body {
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 * {
-  margin: 0;
-  padding: 0;
+  margin: 10;
+  padding: 10;
 }
 
 a {
@@ -54,11 +56,11 @@ a {
 }
 
 a:hover {
-  opacity: 0.7;
+  opacity: 1.7;
 }
 
 header {
-  margin-bottom: -20px;
+  margin-bottom: 20px;
 }
 
 

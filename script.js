@@ -15,7 +15,30 @@ document.getElementById('form-conta').addEventListener('submit', function(event)
         boletoInput.value = '';
         dataInput.value = '';
     }
+
+    var excluirButton = document.createElement('button');
+excluirButton.textContent = 'Excluir';
+excluirButton.addEventListener('click', function() {
+    excluirBoleto(boletoElement.textContent); // Chama a função excluirBoleto passando o número do boleto como parâmetro
 });
+contaElement.appendChild(excluirButton);
+
+});
+
+function excluirBoleto(boletoNumber) {
+    var boletos = obterBoletos();
+
+    // Filtra a lista de boletos, removendo o boleto com o número correspondente
+    var boletosAtualizados = boletos.filter(function(boleto) {
+        return boleto.boleto !== boletoNumber;
+    });
+
+    // Atualiza o armazenamento local com a lista atualizada de boletos
+    localStorage.setItem('boletos', JSON.stringify(boletosAtualizados));
+
+    // Atualiza a exibição da lista de boletos na página
+    atualizarListaBoletos();
+}
 
 // Função para adicionar um boleto à lista
 function adicionarBoleto(nomeBoleto, boletoNumber, dataVencimento) {
@@ -89,7 +112,7 @@ window.addEventListener('load', function() {
   });
   
   // Função para atualizar a lista de boletos na página
-  function atualizarListaBoletos() {
+function atualizarListaBoletos() {
     var listaBoletos = document.getElementById('lista-boletos');
     listaBoletos.innerHTML = ''; // Limpa a lista de boletos
   
@@ -115,50 +138,16 @@ window.addEventListener('load', function() {
         itemBoleto.classList.add('azul');
       }
   
-      // Cria o botão de exclusão
-      var botaoExcluir = document.createElement('button');
-      botaoExcluir.textContent = 'Excluir';
-      botaoExcluir.setAttribute('data-id', boleto.id); // Define o atributo de identificador único
-  
-      // Registra o evento de clique no botão de exclusão
-      botaoExcluir.addEventListener('click', function() {
-        var boletoId = this.getAttribute('data-id');
-        excluirBoleto(boletoId);
-      });
-  
-      // Adiciona o botão de exclusão ao item do boleto
-      itemBoleto.appendChild(botaoExcluir);
-  
       // Adiciona o item do boleto à lista
       listaBoletos.appendChild(itemBoleto);
     });
   }
   
-  // Função para excluir um boleto da lista
-function excluirBoleto(boletoId) {
-    // Obtém os boletos do armazenamento local
-    var boletos = obterBoletos();
+    // Verifica se houve alguma alteração na lista de boletos
+    if (boletos.length !== boletosAtualizados.length) {
+      // Atualiza o armazenamento local com a lista atualizada de boletos
+      localStorage.setItem('boletos', JSON.stringify(boletosAtualizados));
   
-    // Procura o boleto pelo identificador único
-    var boletoIndex = boletos.findIndex(function(boleto) {
-      return boleto.id === boletoId;
-    });
-  
-    // Verifica se o boleto foi encontrado
-    if (boletoIndex !== -1) {
-      // Exibe uma mensagem de confirmação antes da exclusão
-      var confirmacao = confirm('Tem certeza que deseja excluir este boleto?');
-  
-      // Verifica se o usuário confirmou a exclusão
-      if (confirmacao) {
-        // Remove o boleto da lista
-        boletos.splice(boletoIndex, 1);
-  
-        // Atualiza o armazenamento local com a lista atualizada de boletos
-        localStorage.setItem('boletos', JSON.stringify(boletos));
-  
-        // Atualiza a exibição da lista de boletos na página
-        atualizarListaBoletos();
-      }
+      // Atualiza a exibição da lista de boletos na página
+      atualizarListaBoletos();
     }
-  }
