@@ -118,6 +118,14 @@ function atualizarListaBoletos() {
   
     var boletos = obterBoletos();
   
+    // Verifica se os boletos estão vencidos há mais de 10 dias e remove-os
+  boletos = boletos.filter(function(boleto) {
+    var dataVencimento = new Date(boleto.dataVencimento);
+    var diff = Math.ceil((dataVencimento - new Date()) / (1000 * 60 * 60 * 24));
+    return diff >= -10; // Mantém apenas os boletos que não estão vencidos há mais de 10 dias
+    });
+  
+    
     // Ordena os boletos com base na data de vencimento
     boletos.sort(function(a, b) {
       var dataA = new Date(a.dataVencimento);

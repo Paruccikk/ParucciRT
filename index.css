@@ -21,6 +21,21 @@ h2 {
     
 }
 
+.boletos-lista {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.boletos-lista li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.boletos-lista li:last-child {
+  border-bottom: none;
+}
+
 .amarelo {
     background-color: yellow;
 }
