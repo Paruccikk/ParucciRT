@@ -15,30 +15,7 @@ document.getElementById('form-conta').addEventListener('submit', function(event)
         boletoInput.value = '';
         dataInput.value = '';
     }
-
-    var excluirButton = document.createElement('button');
-excluirButton.textContent = 'Excluir';
-excluirButton.addEventListener('click', function() {
-    excluirBoleto(boletoElement.textContent); // Chama a função excluirBoleto passando o número do boleto como parâmetro
 });
-contaElement.appendChild(excluirButton);
-
-});
-
-function excluirBoleto(boletoNumber) {
-    var boletos = obterBoletos();
-
-    // Filtra a lista de boletos, removendo o boleto com o número correspondente
-    var boletosAtualizados = boletos.filter(function(boleto) {
-        return boleto.boleto !== boletoNumber;
-    });
-
-    // Atualiza o armazenamento local com a lista atualizada de boletos
-    localStorage.setItem('boletos', JSON.stringify(boletosAtualizados));
-
-    // Atualiza a exibição da lista de boletos na página
-    atualizarListaBoletos();
-}
 
 // Função para adicionar um boleto à lista
 function adicionarBoleto(nomeBoleto, boletoNumber, dataVencimento) {
@@ -113,49 +90,58 @@ window.addEventListener('load', function() {
   
   // Função para atualizar a lista de boletos na página
 function atualizarListaBoletos() {
-    var listaBoletos = document.getElementById('lista-boletos');
-    listaBoletos.innerHTML = ''; // Limpa a lista de boletos
-  
-    var boletos = obterBoletos();
-  
-    // Verifica se os boletos estão vencidos há mais de 10 dias e remove-os
+  var listaBoletos = document.getElementById('lista-boletos');
+  listaBoletos.innerHTML = ''; // Limpa a lista de boletos
+
+  var boletos = obterBoletos();
+
+  // Ordena os boletos com base na data de vencimento
+  boletos.sort(function(a, b) {
+    var dataA = new Date(a.dataVencimento);
+    var dataB = new Date(b.dataVencimento);
+    return dataA - dataB;
+  });
+
+  boletos.forEach(function(boleto) {
+    var itemBoleto = document.createElement('li');
+    itemBoleto.textContent = `${boleto.nome}: ${boleto.boleto} (Vencimento: ${new Date(boleto.dataVencimento).toLocaleDateString()})`;
+
+    // Aplica a classe correta ao item do boleto com base na categoria
+    if (boleto.categoria === 'vencidas') {
+      itemBoleto.classList.add('vermelho');
+    } else if (boleto.categoria === 'prestes-a-vencer') {
+      itemBoleto.classList.add('amarelo');
+    } else {
+      itemBoleto.classList.add('azul');
+    }
+
+        // Verifica se os boletos estão vencidos há mais de 10 dias e remove-os
   boletos = boletos.filter(function(boleto) {
     var dataVencimento = new Date(boleto.dataVencimento);
     var diff = Math.ceil((dataVencimento - new Date()) / (1000 * 60 * 60 * 24));
     return diff >= -10; // Mantém apenas os boletos que não estão vencidos há mais de 10 dias
     });
-  
-    
-    // Ordena os boletos com base na data de vencimento
-    boletos.sort(function(a, b) {
-      var dataA = new Date(a.dataVencimento);
-      var dataB = new Date(b.dataVencimento);
-      return dataA - dataB;
-    });
-  
-    boletos.forEach(function(boleto) {
-      var itemBoleto = document.createElement('li');
-      itemBoleto.textContent = `${boleto.nome}: ${boleto.boleto} (Vencimento: ${new Date(boleto.dataVencimento).toLocaleDateString()})`;
-  
-      // Aplica a classe correta ao item do boleto com base na categoria
-      if (boleto.categoria === 'vencidas') {
-        itemBoleto.classList.add('vermelho');
-      } else if (boleto.categoria === 'prestes-a-vencer') {
-        itemBoleto.classList.add('amarelo');
-      } else {
-        itemBoleto.classList.add('azul');
-      }
-  
-      // Adiciona o item do boleto à lista
-      listaBoletos.appendChild(itemBoleto);
-    });
-  }
-  
-    // Verifica se houve alguma alteração na lista de boletos
-    if (boletos.length !== boletosAtualizados.length) {
+
+
+
+    // Adiciona o item do boleto à lista
+    listaBoletos.appendChild(itemBoleto);
+  });
+}
+
+// Função para excluir um boleto da lista
+function excluirBoleto(boletoId) {
+  // Obtém os boletos do armazenamento local
+  var boletos = obterBoletos();
+
+  // Procura o boleto pelo identificador único
+  var boletoIndex = boletos.findIndex(function(boleto) {
+    return boleto.id === boletoId;
+  });
+
       // Atualiza o armazenamento local com a lista atualizada de boletos
-      localStorage.setItem('boletos', JSON.stringify(boletosAtualizados));
-  
-      // Atualiza a exibição da lista de boletos na página
+      localStorage.setItem('boletos', JSON.stringify(boletos));
+
+ // Atualiza a exibição da lista de boletos na página
       atualizarListaBoletos();
     }
