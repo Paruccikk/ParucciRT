@@ -12,7 +12,8 @@ h2 {
 
 #nome-input,
 #boleto-input,
-#data-vencimento-input {
+#data-vencimento-input,
+#valor-input {
   width: 15%;
   padding: 10px;
   margin-bottom: 15px;
@@ -641,7 +642,8 @@ body {
       /* Estilos para dispositivos móveis */
       #nome-input,
       #boleto-input,
-      #data-vencimento-input {
+      #data-vencimento-input,
+      #valor-input {
         width: 80%;
         padding: 15px;
         margin-bottom: 15px;
