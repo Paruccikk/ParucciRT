@@ -111,6 +111,7 @@ boletos.sort(function(a, b) {
   return dataA - dataB;
 });
 
+
 boletos.forEach(function(boleto) {
   var itemBoleto = document.createElement('li');
   itemBoleto.textContent = `${boleto.nome}: ${boleto.boleto} (Valor: R$ ${boleto.valor}, Vencimento: ${new Date(boleto.dataVencimento).toLocaleDateString()})`;
