@@ -473,9 +473,27 @@ body {
       /* adiciona um z-index para que o texto apareça acima da imagem */
       z-index: 1;
     }
+
+    #nome-input,
+    #boleto-input,
+    #data-vencimento-input {
+  width: 15%;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
   }
 
   @media (max-width: 999px) {
+
+    #nome-input,
+    #boleto-input,
+    #data-vencimento-input {
+     width: 15%;
+     padding: 10px;
+     margin-bottom: 15px;
+    }
+
     body {
       overflow-x: hidden;
       color: black;
@@ -554,6 +572,14 @@ body {
   }
 
   @media (max-width: 1080px) {
+    
+    #nome-input,
+    #boleto-input,
+    #data-vencimento-input {
+     width: 15%;
+     padding: 10px;
+     margin-bottom: 15px;
+    }
     
     .category1 {
       /* ajusta o tamanho do contêiner */
