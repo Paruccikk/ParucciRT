@@ -115,11 +115,6 @@ boletos = boletos.filter(function(boleto) {
 });
 }
 
-// Função para excluir um boleto da lista
-function excluirBoleto(boletoId) {
-// Obtém os boletos do armazenamento local
-var boletos = obterBoletos();
-
 // Procura o boleto pelo identificador único
 var boletoIndex = boletos.findIndex(function(boleto) {
   return boleto.id === boletoId;
@@ -130,7 +125,6 @@ var boletoIndex = boletos.findIndex(function(boleto) {
 
 // Atualiza a exibição da lista de boletos na página
     atualizarListaBoletos();
-  }
   
   // Função para adicionar um boleto ao banco de dados
 function adicionarBoleto(nomeBoleto, boletoNumber, valorNumber, dataVencimento) {
@@ -162,3 +156,5 @@ function obterBoletos() {
       return boletos;
     });
 }
+
+const database = firebase.database();
