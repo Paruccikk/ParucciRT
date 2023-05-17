@@ -99,18 +99,31 @@ window.addEventListener('load', function() {
 
 // Função para atualizar a lista de boletos na página
 function atualizarListaBoletos() {
-var listaBoletos = document.getElementById('lista-boletos');
-listaBoletos.innerHTML = ''; // Limpa a lista de boletos
+  var listaBoletos = document.getElementById('lista-boletos');
+  listaBoletos.innerHTML = ''; // Limpa a lista de boletos
 
-var boletos = obterBoletos();
+  var boletos = obterBoletos();
 
-// Ordena os boletos com base na data de vencimento
-boletos.sort(function(a, b) {
-  var dataA = new Date(a.dataVencimento);
-  var dataB = new Date(b.dataVencimento);
-  return dataA - dataB;
-});
+  var hoje = new Date(); // Data atual
 
+  boletos.forEach(function(boleto) {
+    var dataVencimento = new Date(boleto.dataVencimento);
+
+    var diff = Math.ceil((dataVencimento - hoje) / (1000 * 60 * 60 * 24)); // Calcula a diferença em dias
+
+    if (diff <= 0) { // Vencido
+      boleto.categoria = 'vencidas';
+    } else if (diff <= 5) { // Faltam menos de 5 dias para o vencimento
+      boleto.categoria = 'prestes-a-vencer';
+    } else { // Não vencido e nem perto de vencer
+      boleto.categoria = 'no-prazo';
+    }
+
+    // Resto do código para criar e adicionar elementos da lista de boletos
+
+    // Atualiza o boleto no armazenamento local
+    localStorage.setItem('boletos', JSON.stringify(boletos));
+  });
 
 boletos.forEach(function(boleto) {
   var itemBoleto = document.createElement('li');
