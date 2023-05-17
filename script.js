@@ -66,30 +66,6 @@ function adicionarBoleto(nomeBoleto, boletoNumber, valorNumber, dataVencimento) 
   contaElement.appendChild(valorElement);
   contaElement.appendChild(document.createTextNode(' - '));
   contaElement.appendChild(dataElement);
-
-// Armazena o boleto no localStorage
-var boletos = obterBoletos();
-var novoBoleto = {
-  nome: nomeBoleto,
-  boleto: boletoNumber,
-  valor: valorNumber,
-  dataVencimento: dataVencimento.toISOString(), // Armazena a data como string no formato ISO
-  categoria: categoria // Adiciona a categoria ao objeto do boleto
-};
-boletos.push(novoBoleto);
-localStorage.setItem('boletos', JSON.stringify(boletos));
-
-atualizarListaBoletos();
-}
-
-// Função para obter os boletos armazenados no localStorage
-function obterBoletos() {
-var boletos = localStorage.getItem('boletos');
-if (boletos) {
-  return JSON.parse(boletos);
-} else {
-  return [];
-}
 }
 
 // Ao carregar a página
@@ -99,31 +75,18 @@ window.addEventListener('load', function() {
 
 // Função para atualizar a lista de boletos na página
 function atualizarListaBoletos() {
-  var listaBoletos = document.getElementById('lista-boletos');
-  listaBoletos.innerHTML = ''; // Limpa a lista de boletos
+var listaBoletos = document.getElementById('lista-boletos');
+listaBoletos.innerHTML = ''; // Limpa a lista de boletos
 
-  var boletos = obterBoletos();
+var boletos = obterBoletos();
 
-  var hoje = new Date(); // Data atual
+// Ordena os boletos com base na data de vencimento
+boletos.sort(function(a, b) {
+  var dataA = new Date(a.dataVencimento);
+  var dataB = new Date(b.dataVencimento);
+  return dataA - dataB;
+});
 
-  boletos.forEach(function(boleto) {
-    var dataVencimento = new Date(boleto.dataVencimento);
-
-    var diff = Math.ceil((dataVencimento - hoje) / (1000 * 60 * 60 * 24)); // Calcula a diferença em dias
-
-    if (diff <= 0) { // Vencido
-      boleto.categoria = 'vencidas';
-    } else if (diff <= 5) { // Faltam menos de 5 dias para o vencimento
-      boleto.categoria = 'prestes-a-vencer';
-    } else { // Não vencido e nem perto de vencer
-      boleto.categoria = 'no-prazo';
-    }
-
-    // Resto do código para criar e adicionar elementos da lista de boletos
-
-    // Atualiza o boleto no armazenamento local
-    localStorage.setItem('boletos', JSON.stringify(boletos));
-  });
 
 boletos.forEach(function(boleto) {
   var itemBoleto = document.createElement('li');
@@ -168,3 +131,34 @@ var boletoIndex = boletos.findIndex(function(boleto) {
 // Atualiza a exibição da lista de boletos na página
     atualizarListaBoletos();
   }
+  
+  // Função para adicionar um boleto ao banco de dados
+function adicionarBoleto(nomeBoleto, boletoNumber, valorNumber, dataVencimento) {
+  // Cria um novo nó no banco de dados com as informações do boleto
+  database.ref('boletos').push({
+    nome: nomeBoleto,
+    boleto: boletoNumber,
+    valor: valorNumber,
+    dataVencimento: dataVencimento.toISOString()
+  })
+  .then(() => {
+    console.log('Boleto adicionado com sucesso ao banco de dados!');
+    atualizarListaBoletos(); // Atualiza a lista de boletos na página
+  })
+  .catch((error) => {
+    console.error('Erro ao adicionar o boleto:', error);
+  });
+}
+
+// Função para obter todos os boletos do banco de dados
+function obterBoletos() {
+  return database.ref('boletos').once('value')
+    .then((snapshot) => {
+      const boletos = [];
+      snapshot.forEach((childSnapshot) => {
+        const boleto = childSnapshot.val();
+        boletos.push(boleto);
+      });
+      return boletos;
+    });
+}
